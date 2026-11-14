@@ -2,41 +2,40 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-
-    password: {
-      type: String,
-      required: true,
-    },
-
+    name: { type: String, required: true, trim: true, index: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true, select: false },
     role: {
       type: String,
-      enum: ["teacher", "student", "admin"],
+      enum: ["superAdmin", "admin", "teacher", "student"],
       default: "student",
+      required: true,
     },
-
-    isLoggedIn: {
-      type: Boolean,
-      default: false,
+    approvalStatus: {
+      // for student and teachers
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "approved",
     },
+    adminApprovalStatus: {
+      // for admins only
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: function () {
+        return this.role === "admin" ? "pending" : undefined;
+      },
+    },
+    isAccountVerified: { type: Boolean, default: true },
+    verifyOtp: { type: String, select: false },
+    verifyOtpExpiresAt: { type: Date, select: false },
+    resetOtp: { type: String, select: false },
+    resetOtpExpiresAt: { type: Date, select: false },
   },
   {
     timestamps: true,
   },
 );
 
-const User = mongoose.model("User", userSchema);
+const userModel = mongoose.models.User || mongoose.model("User", userSchema);
 
-export default User;
+export default userModel;

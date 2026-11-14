@@ -1,0 +1,54 @@
+
+const TeachersListPage = () => {
+    const teachers = [{ _id: "teacher-1", teacher: { name: "Ali Ahmed", email: "ali@example.com" }, classes: [{ class: { _id: "class-1", className: "BS Computer Science" }, subjects: [{ _id: "subject-1", subjectName: "Mathematics" }] }] }, { _id: "teacher-2", teacher: { name: "Usman Khan", email: "usman@example.com" }, classes: [{ class: { _id: "class-2", className: "BS Software Engineering" }, subjects: [{ _id: "subject-3", subjectName: "Database Systems" }] }] }], loading = false;
+    const actingId = null;
+    const deletingAll = false;
+    return (<div className="max-w-6xl mx-auto p-6 pt-8">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-semibold text-sky-600">Teachers</h1>
+        <div className="flex gap-2">
+          <button disabled={deletingAll} className="px-4 py-2 rounded-lg bg-red-600 text-white disabled:opacity-50">
+            {deletingAll ? "Deleting…" : "Delete All"}
+          </button>
+          <button className="px-4 py-2 rounded-lg bg-sky-600 text-white hover:bg-sky-700">
+            + New Teacher Profile
+          </button>
+          <button className="px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+            Back to Dashboard
+          </button>
+        </div>
+      </div>
+
+      {loading && <p className="text-sm text-gray-500">Loading…</p>}
+
+      {!loading && (!teachers || teachers.length === 0) && (<p className="text-sm text-gray-500">No teachers found.</p>)}
+
+      {!loading && teachers?.length > 0 && (<div className="bg-white rounded-xl shadow">
+          <ul className="divide-y">
+            {teachers.map((t) => {
+                const busy = actingId === t._id;
+                return (<li key={t._id} className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">
+                      {t?.teacher?.name || "Unnamed Teacher"}
+                    </p>
+
+                    {Array.isArray(t?.classes) && t.classes.length > 0 ? (<p className="text-xs text-gray-500">Tap for details</p>) : (<p className="text-xs text-gray-500">No classes assigned</p>)}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200">
+                      Details
+                    </button>
+                    <button disabled={busy} className="px-3 py-1.5 rounded-md bg-red-600 text-white disabled:opacity-50">
+                      {busy ? "Deleting…" : "Delete"}
+                    </button>
+                  </div>
+                </li>);
+            })}
+          </ul>
+        </div>)}
+
+    </div>);
+};
+export default TeachersListPage;
